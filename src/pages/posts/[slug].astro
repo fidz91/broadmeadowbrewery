@@ -1,0 +1,194 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import RecipeCard from '../../components/RecipeCard.astro';
+import ExperimentCard from '../../components/ExperimentCard.astro';
+import CompetitionScoreCard from '../../components/CompetitionScoreCard.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+import { CATEGORY_META, withBase } from '../../utils/srm';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+const {
+  title,
+  subtitle,
+  description,
+  pubDate,
+  category,
+  batchNumber,
+  beerStyle,
+  readingTime,
+  heroImage,
+  recipe,
+  experiment,
+  competition,
+} = post.data;
+
+const meta = CATEGORY_META[category];
+const formattedDate = pubDate.toLocaleDateString('en-US', {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric',
+});
+
+const morePosts = (await getCollection('posts'))
+  .filter((p) => p.slug !== post.slug)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+---
+
+<BaseLayout title={`${title} — Broadmeadow Brewery`} description={description}>
+  <article class="article outer">
+    <header class="article-header canvas">
+      <a href={withBase(`/journal?category=${category}`)} class="primary-tag">
+        {meta.plural}
+      </a>
+
+      <h1 class="article-title">{title}</h1>
+
+      {subtitle && <p class="article-excerpt">{subtitle}</p>}
+
+      <div class="article-byline">
+        <time datetime={pubDate.toISOString()}>{formattedDate}</time>
+        {readingTime && <span>&bull; {readingTime}</span>}
+        {batchNumber && <span>&bull; {batchNumber}</span>}
+        {beerStyle && <span>&bull; {beerStyle}</span>}
+      </div>
+    </header>
+
+    {
+      heroImage && (
+        <figure class="article-image inner">
+          <img src={heroImage} alt={title} />
+        </figure>
+      )
+    }
+
+    <div class="article-content canvas">
+      {competition && <CompetitionScoreCard competition={competition} />}
+      {experiment && <ExperimentCard experiment={experiment} title={title} />}
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      {
+        recipe && (
+          <RecipeCard
+            recipe={recipe}
+            beerName={title}
+            beerStyle={beerStyle}
+            batchNumber={batchNumber}
+          />
+        )
+      }
+    </div>
+  </article>
+
+  <section class="read-more-section outer">
+    <div class="inner">
+      <h3 class="read-more-heading">More from Broadmeadow Brewery</h3>
+      <div class="read-more-grid">
+        {morePosts.map((related) => <PostCard post={related} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .article {
+    padding-top: 3.5rem;
+  }
+
+  .article-header {
+    margin-bottom: 2rem;
+  }
+
+  .article-title {
+    font-size: clamp(1.85rem, 4.2vw, 2.75rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    color: var(--text-main);
+    margin-bottom: 1rem;
+  }
+
+  .article-excerpt {
+    font-size: clamp(1.05rem, 2vw, 1.22rem);
+    line-height: 1.55;
+    color: var(--text-muted);
+    margin-bottom: 1.35rem;
+  }
+
+  .article-byline {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    font-size: 0.86rem;
+    color: var(--text-muted);
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .article-image {
+    max-width: 960px;
+    margin: 0 auto 2.75rem;
+  }
+
+  .article-image img {
+    width: 100%;
+    max-height: 520px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+
+  .read-more-section {
+    margin-top: 5rem;
+    padding-top: 3rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .read-more-heading {
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+  }
+
+  .read-more-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  @media (max-width: 900px) {
+    .read-more-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .article {
+      padding-top: 2rem;
+    }
+
+    .article-image {
+      margin-bottom: 2rem;
+    }
+
+    .read-more-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

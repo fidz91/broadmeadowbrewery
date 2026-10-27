@@ -1,0 +1,116 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TaplistBoard from '../components/TaplistBoard.astro';
+import PostCard from '../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = (await getCollection('posts')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<BaseLayout>
+  <!-- Minimalist Cover Header (Humebrew style) -->
+  <div class="site-header-content outer">
+    <img
+      class="site-header-cover"
+      src="https://images.unsplash.com/photo-1559526323-cb2f2fe2591b?auto=format&fit=crop&w=2000&q=80"
+      alt="Broadmeadow Brewery"
+    />
+    <div class="site-header-inner inner">
+      <h1 class="site-title">BROADMEADOW BREWERY</h1>
+      <p class="site-description">
+        Homebrewing writeups, recipe formulations, experiments and everything beer related.
+      </p>
+    </div>
+  </div>
+
+  <!-- Main Content & Post Feed -->
+  <div class="outer">
+    <div class="inner">
+      <TaplistBoard />
+
+      <div class="post-feed">
+        {
+          allPosts.map((post, idx) => (
+            <PostCard post={post} large={idx === 0} />
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .site-header-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 320px;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+    text-align: center;
+    color: #ffffff;
+    background-color: #15171a;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  .site-header-cover {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.42;
+  }
+
+  .site-header-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 680px;
+  }
+
+  .site-title {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: #ffffff;
+    margin-bottom: 0.65rem;
+  }
+
+  .site-description {
+    font-size: clamp(1rem, 2.2vw, 1.25rem);
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.45;
+  }
+
+  .post-feed {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3.25rem 2.25rem;
+  }
+
+  @media (max-width: 900px) {
+    .post-feed {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2.5rem 1.75rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .site-header-content {
+      min-height: 220px;
+      padding-top: 2.75rem;
+      padding-bottom: 2.75rem;
+    }
+
+    .post-feed {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+  }
+</style>

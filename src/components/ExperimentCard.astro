@@ -1,0 +1,47 @@
+---
+interface ExperimentData {
+  hypothesis: string;
+  variableTested: string;
+  controlBatch: string;
+  experimentalBatch: string;
+  panelSize: string;
+  significantResult: boolean;
+  pValueSummary: string;
+  verdict: string;
+}
+
+interface Props {
+  experiment: ExperimentData;
+  title?: string;
+}
+
+const { experiment } = Astro.props;
+---
+
+<section class="experiment-minimal prose">
+  <div class="exp-summary-box">
+    <p>
+      <strong>Variable Tested:</strong> {experiment.variableTested}<br />
+      <strong>Control Arm:</strong> {experiment.controlBatch}<br />
+      <strong>Experimental Arm:</strong> {experiment.experimentalBatch}<br />
+      <strong>Triangle Test Result:</strong> {experiment.panelSize} &bull; <strong>{experiment.pValueSummary}</strong><br />
+      <strong>Verdict:</strong> {experiment.verdict}
+    </p>
+  </div>
+</section>
+
+<style>
+  .exp-summary-box {
+    background-color: var(--bg-soft);
+    padding: 1.25rem 1.35rem;
+    border-left: 3px solid var(--text-main);
+    border-radius: 0 4px 4px 0;
+    margin: 1.5rem 0 2rem;
+    font-size: 0.96rem;
+  }
+
+  .exp-summary-box p {
+    margin: 0;
+    line-height: 1.8;
+  }
+</style>

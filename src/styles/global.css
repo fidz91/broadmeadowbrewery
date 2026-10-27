@@ -1,0 +1,183 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+
+:root {
+  --bg: #ffffff;
+  --bg-soft: #f8f9fa;
+  --text-main: #15171a;
+  --text-body: #2e3238;
+  --text-muted: #738a94;
+  --accent: #15171a;
+  --tag-color: #5c705e;
+  --border: #e6e9ec;
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  --font-serif: 'Lora', Georgia, serif;
+
+  --max-site: 1160px;
+  --max-canvas: 720px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background-color: var(--bg);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.outer {
+  padding: 0 4vw;
+}
+
+.inner {
+  width: 100%;
+  max-width: var(--max-site);
+  margin: 0 auto;
+}
+
+.canvas {
+  width: 100%;
+  max-width: var(--max-canvas);
+  margin: 0 auto;
+}
+
+/* Primary Tag Style (Humebrew / Ghost style) */
+.primary-tag {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--tag-color);
+  margin-bottom: 0.45rem;
+}
+
+/* Clean Article Prose (Humebrew Long-form Reading) */
+.prose {
+  font-family: var(--font-sans);
+  font-size: 1.08rem;
+  line-height: 1.8;
+  color: var(--text-body);
+}
+
+.prose p {
+  margin-bottom: 1.5rem;
+}
+
+.prose h2 {
+  font-family: var(--font-sans);
+  font-size: 1.55rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
+  margin: 2.6rem 0 1rem;
+  line-height: 1.25;
+}
+
+.prose h3 {
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--text-main);
+  margin: 2rem 0 0.75rem;
+}
+
+.prose ul,
+.prose ol {
+  margin-bottom: 1.6rem;
+  padding-left: 1.4rem;
+}
+
+.prose li {
+  margin-bottom: 0.5rem;
+}
+
+.prose blockquote {
+  margin: 2rem 0;
+  padding-left: 1.25rem;
+  border-left: 3px solid var(--text-main);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--text-main);
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0 2rem;
+  font-size: 0.95rem;
+}
+
+.prose th,
+.prose td {
+  text-align: left;
+  padding: 0.7rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.prose th {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  border-bottom: 2px solid var(--border);
+}
+
+.prose code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.88em;
+  background-color: var(--bg-soft);
+  padding: 0.15rem 0.35rem;
+  border-radius: 3px;
+}
+
+.prose a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose a:hover {
+  opacity: 0.75;
+}
+
+/* SRM minimal dot */
+.srm-dot {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  vertical-align: middle;
+}

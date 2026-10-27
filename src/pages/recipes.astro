@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const recipePosts = (await getCollection('posts'))
+  .filter((post) => post.data.recipe !== undefined)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout
+  title="Homebrewing Recipes — Broadmeadow Brewery"
+  description="All-grain homebrewing recipes with grist bill percentages, hop schedules, and fermentation notes."
+>
+  <div class="outer page-wrap">
+    <div class="inner">
+      <header class="page-head">
+        <h1>Homebrewing Recipes</h1>
+        <p>All-grain formulations with full grist bill percentages, hop schedules, and water profiles.</p>
+      </header>
+
+      <div class="post-feed">
+        {recipePosts.map((post) => <PostCard post={post} />)}
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-wrap {
+    padding-top: 3rem;
+  }
+
+  .page-head {
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-head h1 {
+    font-size: clamp(1.85rem, 4vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.4rem;
+  }
+
+  .page-head p {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+  }
+
+  .post-feed {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem 2.25rem;
+  }
+
+  @media (max-width: 900px) {
+    .post-feed {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .page-wrap {
+      padding-top: 2rem;
+    }
+    .post-feed {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+  }
+</style>

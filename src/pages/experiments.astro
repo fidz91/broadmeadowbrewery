@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const experimentPosts = (await getCollection('posts'))
+  .filter((post) => post.data.category === 'experiment' || post.data.experiment !== undefined)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout
+  title="Brewing Experiments — Broadmeadow Brewery"
+  description="Controlled split-batch homebrewing experiments and sensory comparisons."
+>
+  <div class="outer page-wrap">
+    <div class="inner">
+      <header class="page-head">
+        <h1>Brewing Experiments</h1>
+        <p>Controlled split-batch trials, ingredient comparisons, and blind triangle tests.</p>
+      </header>
+
+      <div class="post-feed">
+        {experimentPosts.map((post) => <PostCard post={post} />)}
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-wrap {
+    padding-top: 3rem;
+  }
+
+  .page-head {
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-head h1 {
+    font-size: clamp(1.85rem, 4vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.4rem;
+  }
+
+  .page-head p {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+  }
+
+  .post-feed {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem 2.25rem;
+  }
+
+  @media (max-width: 900px) {
+    .post-feed {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .page-wrap {
+      padding-top: 2rem;
+    }
+    .post-feed {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+  }
+</style>

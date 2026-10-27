@@ -1,0 +1,56 @@
+---
+interface CompetitionData {
+  eventName: string;
+  date: string;
+  location: string;
+  bjcpCategory: string;
+  entryBeer: string;
+  batchNumber: string;
+  score: number;
+  maxScore: number;
+  award: 'Best of Show' | 'Gold' | 'Silver' | 'Bronze' | 'Finalist' | 'Entered';
+  scoresBreakdown: {
+    aroma: number;
+    appearance: number;
+    flavor: number;
+    mouthfeel: number;
+    overall: number;
+  };
+  judgeConsensus: string;
+  recipeImprovements: string;
+}
+
+interface Props {
+  competition: CompetitionData;
+}
+
+const { competition } = Astro.props;
+---
+
+<section class="comp-minimal prose">
+  <div class="comp-summary-box">
+    <p>
+      <strong>Competition:</strong> {competition.eventName} ({competition.date}, {competition.location})<br />
+      <strong>Entry:</strong> {competition.entryBeer} ({competition.batchNumber}) &bull; BJCP {competition.bjcpCategory}<br />
+      <strong>Result:</strong> <strong>{competition.award} Medal ({competition.score} / {competition.maxScore} pts)</strong><br />
+      <strong>Scoresheet Breakdown:</strong> Aroma {competition.scoresBreakdown.aroma}/12 &bull; Appearance {competition.scoresBreakdown.appearance}/3 &bull; Flavor {competition.scoresBreakdown.flavor}/20 &bull; Mouthfeel {competition.scoresBreakdown.mouthfeel}/5 &bull; Overall {competition.scoresBreakdown.overall}/10<br />
+      <strong>Judge Notes:</strong> {competition.judgeConsensus}
+    </p>
+  </div>
+</section>
+
+<style>
+  .comp-summary-box {
+    background-color: var(--bg-soft);
+    padding: 1.25rem 1.35rem;
+    border-left: 3px solid var(--text-main);
+    border-radius: 0 4px 4px 0;
+    margin: 1.5rem 0 2rem;
+    font-size: 0.96rem;
+  }
+
+  .comp-summary-box p {
+    margin: 0;
+    line-height: 1.8;
+  }
+</style>

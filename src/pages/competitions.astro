@@ -1,0 +1,119 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { COMPETITION_RECORDS } from '../data/competitions';
+import { srmToHex, withBase } from '../utils/srm';
+---
+
+<BaseLayout
+  title="Competitions — Broadmeadow Brewery"
+  description="Competition entries, BJCP scoresheets, and judge feedback."
+>
+  <div class="outer page-wrap">
+    <div class="canvas prose">
+      <h1>Competitions &amp; Scoresheets</h1>
+      <p>
+        We enter regional and national BJCP competitions for honest blind feedback. Every scoresheet directly informs the next iteration of our recipes.
+      </p>
+
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Competition</th>
+              <th>Beer &amp; Style</th>
+              <th>Score</th>
+              <th>Award</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              COMPETITION_RECORDS.map((rec) => (
+                <tr>
+                  <td class="nowrap">{rec.date}</td>
+                  <td>{rec.competitionName}</td>
+                  <td>
+                    <span class="srm-dot" style={`background-color: ${srmToHex(rec.srm)};`} />{' '}
+                    {rec.postSlug ? (
+                      <a href={withBase(`/posts/${rec.postSlug}`)}><strong>{rec.beerName}</strong></a>
+                    ) : (
+                      <strong>{rec.beerName}</strong>
+                    )}{' '}
+                    <span class="muted">({rec.bjcpCategory} {rec.bjcpStyleName})</span>
+                  </td>
+                  <td class="nowrap">{rec.score} / {rec.maxScore}</td>
+                  <td class="nowrap"><strong>{rec.award}</strong></td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Judge Notes &amp; Recipe Adjustments</h2>
+      {
+        COMPETITION_RECORDS.map((rec) => (
+          <div class="comp-item">
+            <h3>
+              {rec.beerName} — {rec.award} ({rec.score}/50)
+            </h3>
+            <p class="comp-meta">
+              {rec.competitionName} ({rec.date}) &bull; Aroma {rec.scoresBreakdown.aroma}/12, Appearance {rec.scoresBreakdown.appearance}/3, Flavor {rec.scoresBreakdown.flavor}/20, Mouthfeel {rec.scoresBreakdown.mouthfeel}/5, Overall {rec.scoresBreakdown.overall}/10
+            </p>
+            <p><strong>Judge Summary:</strong> “{rec.judgeSummary}”</p>
+            <p><strong>Next Iteration:</strong> {rec.nextIterationPlan}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-wrap {
+    padding-top: 3rem;
+  }
+
+  .page-wrap h1 {
+    font-size: clamp(1.85rem, 4vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+  }
+
+  .table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .nowrap {
+    white-space: nowrap;
+  }
+
+  .muted {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+  }
+
+  .comp-item {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .comp-item h3 {
+    margin-top: 0;
+  }
+
+  .comp-meta {
+    font-size: 0.86rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  @media (max-width: 640px) {
+    .page-wrap {
+      padding-top: 2rem;
+    }
+  }
+</style>

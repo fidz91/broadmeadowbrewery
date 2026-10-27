@@ -1,0 +1,191 @@
+---
+import { srmToHex, srmDescriptor } from '../utils/srm';
+
+interface Fermentable {
+  name: string;
+  weight: string;
+  percentage: number;
+  lovibond?: string;
+  notes?: string;
+}
+
+interface HopAddition {
+  name: string;
+  weight: string;
+  alphaAcid: string;
+  timing: string;
+  use: 'Boil' | 'First Wort' | 'Flameout' | 'Whirlpool' | 'Dry Hop' | 'Mash Hop';
+  ibuContribution?: number;
+}
+
+interface MashStep {
+  step: string;
+  temp: string;
+  duration: string;
+  notes?: string;
+}
+
+interface RecipeData {
+  batchSize: string;
+  boilTime: string;
+  efficiency: string;
+  og: number;
+  fg: number;
+  abv: number;
+  ibu: number;
+  srm: number;
+  fermentables: Fermentable[];
+  hops: HopAddition[];
+  yeast: {
+    name: string;
+    lab: string;
+    code: string;
+    attenuation: string;
+    tempRange: string;
+    pitchNotes?: string;
+  };
+  mash: MashStep[];
+  waterProfile?: {
+    profileName: string;
+    ca: number;
+    mg: number;
+    na: number;
+    cl: number;
+    so4: number;
+    hco3?: number;
+    mashPh: number;
+    notes?: string;
+  };
+}
+
+interface Props {
+  recipe: RecipeData;
+  beerName?: string;
+  beerStyle?: string;
+  batchNumber?: string;
+}
+
+const { recipe } = Astro.props;
+const hexColor = srmToHex(recipe.srm);
+const colorDesc = srmDescriptor(recipe.srm);
+---
+
+<section class="recipe-minimal prose">
+  <hr class="recipe-divider" />
+
+  <h2>Recipe Specifications</h2>
+  <p class="recipe-specs-list">
+    <strong>Batch Size:</strong> {recipe.batchSize} &nbsp;&bull;&nbsp;
+    <strong>Boil Time:</strong> {recipe.boilTime} &nbsp;&bull;&nbsp;
+    <strong>Efficiency:</strong> {recipe.efficiency}<br />
+    <strong>ABV:</strong> {recipe.abv.toFixed(1)}% &nbsp;&bull;&nbsp;
+    <strong>OG:</strong> {recipe.og.toFixed(3)} &nbsp;&bull;&nbsp;
+    <strong>FG:</strong> {recipe.fg.toFixed(3)} &nbsp;&bull;&nbsp;
+    <strong>IBUs:</strong> {recipe.ibu}<br />
+    <strong>Color:</strong> <span class="srm-dot" style={`background-color: ${hexColor};`}></span> {recipe.srm} SRM ({colorDesc})
+  </p>
+
+  <h3>Malt Bill</h3>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Amount</th>
+          <th>Grist %</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          recipe.fermentables.map((grain) => (
+            <tr>
+              <td>{grain.name}</td>
+              <td class="nowrap">{grain.weight}</td>
+              <td class="nowrap"><strong>{grain.percentage.toFixed(1)}%</strong></td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Hops</h3>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Amount</th>
+          <th>Time</th>
+          <th>Use</th>
+          <th>AA%</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          recipe.hops.map((hop) => (
+            <tr>
+              <td>{hop.name}</td>
+              <td class="nowrap">{hop.weight}</td>
+              <td class="nowrap">{hop.timing}</td>
+              <td>{hop.use}</td>
+              <td class="nowrap">{hop.alphaAcid}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Mash &amp; Yeast</h3>
+  <ul>
+    {
+      recipe.mash.map((step) => (
+        <li>
+          <strong>{step.step}:</strong> {step.temp} for {step.duration}
+          {step.notes ? ` — ${step.notes}` : ''}
+        </li>
+      ))
+    }
+    <li>
+      <strong>Yeast:</strong> {recipe.yeast.name} ({recipe.yeast.lab} {recipe.yeast.code}) &bull; {recipe.yeast.tempRange} ({recipe.yeast.attenuation} attenuation)
+    </li>
+    {
+      recipe.waterProfile && (
+        <li>
+          <strong>Water Profile ({recipe.waterProfile.profileName}):</strong> Ca {recipe.waterProfile.ca} ppm, Mg {recipe.waterProfile.mg} ppm, Na {recipe.waterProfile.na} ppm, SO₄ {recipe.waterProfile.so4} ppm, Cl {recipe.waterProfile.cl} ppm &bull; Mash pH {recipe.waterProfile.mashPh.toFixed(2)}
+        </li>
+      )
+    }
+  </ul>
+</section>
+
+<style>
+  .recipe-minimal {
+    margin: 2.5rem 0;
+  }
+
+  .recipe-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin-bottom: 2rem;
+  }
+
+  .recipe-specs-list {
+    background-color: var(--bg-soft);
+    padding: 1.15rem 1.35rem;
+    border-radius: 4px;
+    font-size: 0.96rem;
+    line-height: 1.85;
+  }
+
+  .table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .nowrap {
+    white-space: nowrap;
+  }
+</style>

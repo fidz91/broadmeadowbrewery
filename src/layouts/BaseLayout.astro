@@ -1,0 +1,314 @@
+---
+import '../styles/global.css';
+import { withBase } from '../utils/srm';
+
+interface Props {
+  title?: string;
+  description?: string;
+  currentPath?: string;
+}
+
+const {
+  title = 'BROADMEADOW BREWERY',
+  description = 'Homebrewing writeups, recipe formulations, experiments, competitions and brewing notes.',
+  currentPath = Astro.url.pathname,
+} = Astro.props;
+
+const homeHref = withBase('/');
+const navLinks = [
+  { href: homeHref, label: 'Home' },
+  { href: withBase('/about'), label: 'About' },
+  { href: withBase('/recipes'), label: 'Homebrewing Recipes' },
+  { href: withBase('/journal?category=brewday'), label: 'Brewdays' },
+  { href: withBase('/experiments'), label: 'Experiments' },
+  { href: withBase('/competitions'), label: 'Competitions' },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
+  </head>
+  <body>
+    <header class="gh-head outer">
+      <div class="gh-head-inner inner">
+        <div class="gh-head-brand">
+          <a class="gh-head-logo" href={homeHref}>BROADMEADOW</a>
+          <div class="gh-mobile-actions">
+            <a href={withBase('/journal')} class="gh-search-btn" aria-label="Search articles">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </a>
+            <button type="button" class="gh-burger" id="mobile-menu-toggle" aria-label="Toggle Menu" aria-expanded="false">
+              <span class="burger-line"></span>
+              <span class="burger-line"></span>
+            </button>
+          </div>
+        </div>
+
+        <nav class="gh-head-menu" id="site-nav" aria-label="Primary Navigation">
+          <ul class="nav-list">
+            {
+              navLinks.map((item) => {
+                const isActive =
+                  item.href === homeHref
+                    ? currentPath === homeHref || currentPath === homeHref.replace(/\/$/, '')
+                    : currentPath.startsWith(item.href.split('?')[0]) && item.href !== homeHref;
+                return (
+                  <li>
+                    <a href={item.href} class:list={['nav-link', { active: isActive }]}>
+                      {item.label}
+                    </a>
+                  </li>
+                );
+              })
+            }
+          </ul>
+        </nav>
+
+        <div class="gh-head-actions">
+          <a href={withBase('/journal')} class="gh-search-btn" aria-label="Search articles" title="Search & Archive">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="site-main">
+      <slot />
+    </main>
+
+    <footer class="gh-foot outer">
+      <div class="gh-foot-inner inner">
+        <div class="gh-copyright">
+          <strong>BROADMEADOW BREWERY</strong> &copy; {new Date().getFullYear()}
+        </div>
+        <nav class="gh-foot-menu">
+          <a href={homeHref}>Home</a>
+          <a href={withBase('/recipes')}>Recipes</a>
+          <a href={withBase('/experiments')}>Experiments</a>
+          <a href={withBase('/competitions')}>Competitions</a>
+          <a href={withBase('/journal')}>Search &amp; Archive</a>
+          <a href={withBase('/about')}>About</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      const toggleBtn = document.getElementById('mobile-menu-toggle');
+      const siteNav = document.getElementById('site-nav');
+
+      toggleBtn?.addEventListener('click', () => {
+        const isOpen = siteNav?.classList.toggle('is-open');
+        toggleBtn.classList.toggle('is-active', Boolean(isOpen));
+        toggleBtn.setAttribute('aria-expanded', String(Boolean(isOpen)));
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  .gh-head {
+    height: 76px;
+    display: flex;
+    align-items: center;
+    background-color: var(--bg);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .gh-head-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .gh-head-brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .gh-head-logo {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text-main);
+  }
+
+  .gh-mobile-actions {
+    display: none;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .gh-head-menu .nav-list {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+  }
+
+  .nav-link {
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--text-body);
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--text-main);
+    opacity: 0.7;
+  }
+
+  .gh-search-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    color: var(--text-main);
+    border-radius: 50%;
+  }
+
+  .gh-search-btn:hover {
+    background-color: var(--bg-soft);
+  }
+
+  .gh-burger {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 38px;
+    height: 38px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+  }
+
+  .burger-line {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: var(--text-main);
+    transition: transform 0.2s ease;
+  }
+
+  .gh-burger.is-active .burger-line:first-child {
+    transform: translateY(3.5px) rotate(45deg);
+  }
+
+  .gh-burger.is-active .burger-line:last-child {
+    transform: translateY(-3.5px) rotate(-45deg);
+  }
+
+  .site-main {
+    flex: 1;
+  }
+
+  .gh-foot {
+    margin-top: 5rem;
+    padding-top: 2.5rem;
+    padding-bottom: 3rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  .gh-foot-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .gh-copyright strong {
+    color: var(--text-main);
+  }
+
+  .gh-foot-menu {
+    display: flex;
+    gap: 1.35rem;
+    flex-wrap: wrap;
+  }
+
+  .gh-foot-menu a:hover {
+    color: var(--text-main);
+  }
+
+  /* Phone & Tablet Responsive Navigation */
+  @media (max-width: 860px) {
+    .gh-head {
+      height: auto;
+      min-height: 64px;
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+
+    .gh-head-inner {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    .gh-head-brand {
+      width: 100%;
+    }
+
+    .gh-mobile-actions {
+      display: flex;
+    }
+
+    .gh-head-actions {
+      display: none;
+    }
+
+    .gh-head-menu {
+      display: none;
+      padding-top: 1rem;
+      padding-bottom: 0.5rem;
+      border-top: 1px solid var(--border);
+      margin-top: 0.75rem;
+    }
+
+    .gh-head-menu.is-open {
+      display: block;
+    }
+
+    .gh-head-menu .nav-list {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+    }
+
+    .gh-head-menu .nav-list li {
+      width: 100%;
+    }
+
+    .nav-link {
+      display: block;
+      padding: 0.75rem 0;
+      font-size: 1.05rem;
+      border-bottom: 1px solid var(--bg-soft);
+    }
+
+    .gh-foot-inner {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

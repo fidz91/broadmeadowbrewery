@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="About — Broadmeadow Brewery"
+  description="About Broadmeadow Brewery, our 21L all-grain setup, and brewing philosophy."
+>
+  <div class="outer page-wrap">
+    <div class="canvas prose">
+      <h1>About Broadmeadow Brewery</h1>
+      <p>
+        Welcome to <strong>Broadmeadow Brewery</strong>—a personal homebrewing journal documenting brewday writeups, iterative recipe developments, split-batch experiments, and competition results.
+      </p>
+
+      <h2>The Brewhouse</h2>
+      <ul>
+        <li><strong>Batch Volume:</strong> 21.0 L (5.5 US Gal) all-grain electric HERMS system</li>
+        <li><strong>Milling:</strong> Two-roller mill set to a <code>0.95 mm</code> gap with malt conditioning</li>
+        <li><strong>Water Treatment:</strong> Reverse-osmosis blank slate mineralized with precision salt additions for each style</li>
+        <li><strong>Fermentation &amp; Cellar:</strong> Temperature-controlled stainless conicals, pressure spunding, and a 3-tap keezer with a Czech LUKR side-pull faucet</li>
+      </ul>
+
+      <h2>Adding a New Post</h2>
+      <p>
+        Every writeup lives as a simple Markdown file in <code>src/content/posts/</code>. Include a <code>recipe</code> block in the frontmatter to automatically render the recipe specification and Malt Bill table with grist percentages.
+      </p>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-wrap {
+    padding-top: 3rem;
+  }
+
+  .page-wrap h1 {
+    font-size: clamp(1.85rem, 4vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+
+  @media (max-width: 640px) {
+    .page-wrap {
+      padding-top: 2rem;
+    }
+  }
+</style>
